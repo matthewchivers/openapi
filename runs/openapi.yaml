@@ -1,8 +1,7 @@
-openapi: "3.0.0"
+openapi: "3.0.3"
 info:
   title: Galasa Runs Requests
   version: 0.15.0
-
 servers:
   - url: 'http://{server}:{port}'
     variables:
@@ -12,32 +11,32 @@ servers:
         default: "8080"
 
 paths:
-  /runs/{id}:
+  /runs/{groupId}:
     get:
-      summary: Get Run Info
+      summary: Retrieve all active runs for a group id
       parameters:
-        - name: id
+        - name: groupId
           in: path
-          description: Run Group ID
+          description: Run group ID can be any type of string value that is URL safe
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: Run Info
+          description: Returns all the runs for the groupid
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TestRuns'
     post:
-      summary: Start Test Runs 2
+      summary: Submit a set of test runs for a group ID can be run multiple times against the same group ID, the new test runs will be appended
       parameters:
-        - name: id
+        - name: groupId
           in: path
-          description: Run Group ID
+          description: Run group ID can be any type of string value that is URL safe
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -62,53 +61,77 @@ components:
       properties:
         name:
           type: string
+          description: The run name
         type:
           type: string
+          description: The type of request, ie REQUEST, JENKINS, LOCAL
         group:
           type: string
+          description: the group ID assigned to this run
         test:
           type: string
+          description: the full test name in bundle/test format
         bundleName:
           type: string
+          description: the bundle name
         testName:
           type: string
+          description: the test class name
         status:
           type: string
+          description: the current status of the run, ie allocated, starting, building etc
         queued:
           type: string
+          description: when the test was queued
         requestor:
           type: string
+          description: who requested the run
         stream:
           type: string
+          description: the test stream the test should be loaded from
         repo:
           type: string
+          description: the maven repositories to be used
         obr:
           type: string
+          description: the obrs to be used
         local:
           type: boolean
+          description: is this a local run
         trace:
           type: boolean
+          description: has trace been requested
     TestRunRequest:
       properties:
         classNames:
           type: array
           items:
             type: string
+            description: An array of bundle/test strings
         requestorType:
           type: string
+          description: The request type, normally REQUEST, JENKINS, can be others
         requestor:
           type: string
+          description: The requestor, usually email address but doesnt need to be
         testStream:
           type: string
+          description: The test stream to be used
         obr:
           type: string
+          description: an overriding OBR
         mavenRepository:
           type: string
+          description: an overriding maven repo
         sharedEnvironmentPhase:
           type: string
+          description: The shared env phase, build or discard, for normal runs, null
         sharedEnvironmentRunName:
           type: string
+          description: The shared env name,  for normal runs, null
         overrides:
           type: object
+          description: Override properties
         trace:
           type: boolean
+          description: enable trace
